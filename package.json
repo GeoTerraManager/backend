@@ -6,7 +6,7 @@
   "repository": "git@github.com:TerraGeoManager/backend.git",
   "license": "MIT",
   "scripts": {
-    "migrate": "npx prisma generate",
+    "push": "npx prisma db push",
     "dev": "ts-node-dev ./src/index.ts",
     "start": "ts-node ./src/"
   },
