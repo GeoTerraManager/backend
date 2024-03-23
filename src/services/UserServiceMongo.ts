@@ -22,4 +22,8 @@ export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
   async findUserById (id: string): Promise<void> {
     throw new Error('Method not implemented.')
   }
+
+  async findUserByName(name: string): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 }

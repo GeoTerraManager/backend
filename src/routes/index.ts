@@ -1,9 +1,9 @@
 import { Router } from "express";
-import routesUser from "./users";
+import userRoutes from "./user" 
 
-const routes = Router();
+const routes = Router()
 
-// Registrando a rota de usuarios
-routes.use("/usuario", routesUser);
+// Registrar novas rotas aqui
+routes.use("/usuario", userRoutes)
 
-export default routes;
+export default routes

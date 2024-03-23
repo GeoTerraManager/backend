@@ -9,4 +9,6 @@ export default abstract class UserService<UserRepository> extends Service<UserRe
   abstract removeUser (id: string): Promise<void>
 
   abstract findUserById (id: string): Promise<void>
+
+  abstract findUserByName (name: string): Promise<void>
 }
