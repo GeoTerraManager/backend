@@ -1,25 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import { CreateUserDTO } from "../models/CreateUserDTO";
+import { type UserDTO } from '../models/UserDTO'
+import Service from './Service'
 
-export default class UserService {
-  private client: PrismaClient;
+export default abstract class UserService<UserRepository> extends Service<UserRepository> {
+  abstract createUser (user: UserDTO): Promise<void>
 
-  constructor(client: PrismaClient) {
-    this.client = client;
-  }
+  abstract updateUser (id: string, user: UserDTO): Promise<void>
 
-  public async createUser(user: CreateUserDTO) {
-    try {
-      await this.client.user.create({
-        data: {
-          email: user.email,
-          password: user.senha,
-          nome_usuario: user.nome_de_usuario,
-          nome_completo: user.nome_completo
-        }
-      });
-    } catch (error) {
-      throw new Error("Error creating user: " + error);
-    }
-  }
+  abstract removeUser (id: string): Promise<void>
+
+  abstract findUserById (id: string): Promise<void>
 }
