@@ -3,7 +3,7 @@ import SquareDTO from "../models/SquareDTO"
 export default abstract class SquareRepository<T> {
   protected repository: T
 
-  constructor(repository: T) {
+  constructor (repository: T) {
     this.repository = repository
   }
 
@@ -12,4 +12,6 @@ export default abstract class SquareRepository<T> {
 
   // DELETE /quadricula/:id
   abstract deleteSquare (id: string): void
+
+  abstract getSquareNickname (nickname: string): void
 }

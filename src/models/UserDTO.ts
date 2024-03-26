@@ -1,4 +1,4 @@
-import { IsEmail, IsString, validate } from "class-validator"
+import { IsEmail, IsString } from "class-validator"
 import DTO from "./DTO"
 
 export class UserDTO extends DTO {

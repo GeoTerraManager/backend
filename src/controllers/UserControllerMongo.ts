@@ -13,7 +13,7 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
   async createUser(req: Request, res: Response): Promise<void> {
     try {
       const body = req.body
-      
+
       // validando o corpo da requisicao
       let user_dto = new UserDTO()
       try {
