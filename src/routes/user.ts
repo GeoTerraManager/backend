@@ -7,5 +7,6 @@ const routes = Router()
 
 // POST /usuario -> createUser
 routes.post("/", controller.createUser.bind(controller));
+routes.get("/", controller.findUserByName.bind(controller))
 
 export default routes;

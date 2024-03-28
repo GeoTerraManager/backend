@@ -1,3 +1,4 @@
+import UserByNameDTO from '../models/UserByNameDTO'
 import { type UserDTO } from '../models/UserDTO'
 import Service from './Service'
 
@@ -10,5 +11,5 @@ export default abstract class UserService<UserRepository> extends Service<UserRe
 
   abstract findUserById (id: string): Promise<void>
 
-  abstract findUserByName (name: string): Promise<void>
+  abstract findUserByName (name: string): Promise<Array<UserByNameDTO> | null>
 }

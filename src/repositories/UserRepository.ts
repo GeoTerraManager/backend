@@ -1,4 +1,5 @@
 import { type UserDTO } from '../models/UserDTO'
+import { WithId, Document } from "mongodb";
 
 export default abstract class UserRepository<T> {
   protected repository: T
@@ -19,5 +20,5 @@ export default abstract class UserRepository<T> {
   abstract findUserById (id: string): void
 
   // GET /usuario?nome_usuario=:name
-  abstract findUserByName (name: string): void
+  abstract findUserByName (name: string): Promise<Array<WithId<Document>> | null>
 }

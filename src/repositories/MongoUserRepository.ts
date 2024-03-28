@@ -1,4 +1,5 @@
 import { type UserDTO } from '../models/UserDTO'
+import { WithId, Document } from 'mongodb';
 import MongoRepository from './MongoRepository'
 import UserRepository from './UserRepository'
 
@@ -32,7 +33,22 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
     throw new Error('Method not implemented.')
   }
 
-  findUserByName (name: string): void {
-    throw new Error('Method not implemented.')
+  async findUserByName(name: string): Promise<Array<WithId<Document>> | null> {
+    try {
+      const db = await this.repository.connect('api');
+      const users = db.collection('users');
+      
+      const users_documents = await users.find({
+        nome_de_usuario: { $regex: new RegExp(name, "i") } 
+      }).toArray();
+      
+      await this.repository.disconnect();
+  
+      return users_documents;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
+  
 }
