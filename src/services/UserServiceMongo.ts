@@ -17,7 +17,7 @@ export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
   }
 
   async removeUser (id: string): Promise<void> {
-    throw new Error('Method not implemented.')
+    await this.repository.removeUser(id)
   }
 
   async findUserById (id: string): Promise<UserNameOnlyDTO | null> {

@@ -26,8 +26,20 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
     throw new Error('Method not implemented.')
   }
 
-  removeUser (id: string): void {
-    throw new Error('Method not implemented.')
+  async removeUser (id: string): Promise<void> {
+    try {
+      const db = await this.repository.connect('api');
+      const users = db.collection('users');
+      
+      await users.deleteOne({
+        _id: new ObjectId(id)
+      })
+
+      await this.repository.disconnect();
+    } catch (error) {
+      console.log(error);
+      throw new Error(`Erro na deleção de usuário: ${error}`);
+    }
   }
 
   async findUserById (id: string): Promise<WithId<Document> | null> {
