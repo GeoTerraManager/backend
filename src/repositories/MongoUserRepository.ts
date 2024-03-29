@@ -1,6 +1,8 @@
 import { type UserDTO } from '../models/UserDTO'
+import { WithId, Document, ObjectId } from 'mongodb';
 import MongoRepository from './MongoRepository'
 import UserRepository from './UserRepository'
+import { timeStamp } from 'console';
 
 export default class MongoUserRepository extends UserRepository<MongoRepository> {
   constructor () {
@@ -28,11 +30,40 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
     throw new Error('Method not implemented.')
   }
 
-  findUserById (id: string): void {
-    throw new Error('Method not implemented.')
+  async findUserById (id: string): Promise<WithId<Document> | null> {
+    try {
+      const db = await this.repository.connect('api');
+      const users = db.collection('users');
+
+      const user_document = await users.findOne({
+        _id: new ObjectId(id)
+      })
+
+      await this.repository.disconnect();
+
+      return user_document;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 
-  findUserByName (name: string): void {
-    throw new Error('Method not implemented.')
+  async findUserByName(name: string): Promise<Array<WithId<Document>> | null> {
+    try {
+      const db = await this.repository.connect('api');
+      const users = db.collection('users');
+      
+      const users_documents = await users.find({
+        nome_de_usuario: { $regex: new RegExp(name, "i") } 
+      }).toArray();
+      
+      await this.repository.disconnect();
+  
+      return users_documents;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
+  
 }
