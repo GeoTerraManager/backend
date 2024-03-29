@@ -27,6 +27,7 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
       } catch(e) {
         // caso seja invalido retorna codigo 422 e o erro de validacao
         res.status(422).json({"error": `Erro ao validar o objeto enviado "${e}".`})
+        return
       }
       // ----------------------
 
