@@ -1,3 +1,4 @@
+import { ObjectId } from "bson";
 import SquareDTO from "../models/SquareDTO";
 import MongoRepository from "./MongoRepository";
 import SquareRepository from "./SquareRepository";
@@ -22,7 +23,12 @@ export default class MongoSquareRepository extends SquareRepository<MongoReposit
   }
 
   async deleteSquare(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
+    const db = await this.repository.connect('api');
+    const squares = db.collection('squares')
+    await squares.deleteOne({
+      _id: new ObjectId(id)
+    })
+    await this.repository.disconnect()
   }
 
   async getSquareNickname(nickname: string): Promise<void> {
