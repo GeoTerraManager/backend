@@ -8,7 +8,17 @@ export default class MongoSquareRepository extends SquareRepository<MongoReposit
   }
 
   async createSquare(square: SquareDTO): Promise<void> {
-    throw new Error("Method not implemented.");
+    const db = await this.repository.connect('api')
+    const squares = db.collection('squares')
+    await squares.insertOne({
+      apelido: square.apelido,
+      min_lat: square.min_lat,
+      max_lat: square.max_lat,
+      min_lon: square.min_lon,
+      max_lon: square.max_lon
+    })
+
+    await this.repository.disconnect()
   }
 
   async deleteSquare(id: string): Promise<void> {
