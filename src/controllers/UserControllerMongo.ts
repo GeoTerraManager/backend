@@ -52,8 +52,20 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
   }
 
   // GET /usuario/:id
-  findUserById(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async findUserById(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.params.id;
+
+      const response = await this.service.findUserById(id);
+
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.status(204).send();
+      }
+    } catch (e) {
+      res.status(500).json({"error": `${e}`})
+    }
   }
 
   // GET /usuario?nome_de_usuario=<:nome>

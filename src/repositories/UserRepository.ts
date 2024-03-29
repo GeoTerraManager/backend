@@ -17,7 +17,7 @@ export default abstract class UserRepository<T> {
   abstract removeUser (id: string): void
 
   // GET /usuario/:id
-  abstract findUserById (id: string): void
+  abstract findUserById (id: string): Promise<WithId<Document> | null> 
 
   // GET /usuario?nome_usuario=:name
   abstract findUserByName (name: string): Promise<Array<WithId<Document>> | null>

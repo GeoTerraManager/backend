@@ -2,7 +2,7 @@ import { IsMongoId, IsString } from "class-validator";
 import DTO from "./DTO";
 import { ObjectId } from "mongodb";
 
-export default class UserByNameDTO extends DTO {
+export default class UserNameOnlyDTO extends DTO {
   @IsMongoId()
   id: ObjectId
   
