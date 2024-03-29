@@ -48,8 +48,16 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
   }
 
   // DELETE /usuario/:id
-  removeUser(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async removeUser(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.params.id;
+
+      await this.service.removeUser(id)
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(400).json({"error": `${error}`})
+    }
   }
 
   // GET /usuario/:id
