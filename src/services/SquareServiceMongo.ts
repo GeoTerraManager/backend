@@ -11,8 +11,8 @@ export default class SquareServiceMongo extends SquareService<MongoSquareReposit
     await this.repository.createSquare(square)
   }
 
-  async deleteSquare(id: string, square: SquareDTO): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteSquare(id: string): Promise<void> {
+    await this.repository.deleteSquare(id)
   }
 
   async getSquareNickname(id: string): Promise<void> {

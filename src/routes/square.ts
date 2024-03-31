@@ -8,4 +8,7 @@ const routes = Router()
 // POST /quadricula -> createSquare
 routes.post("/", controller.createSquare.bind(controller));
 
+// Delete /quadricula/:id -> deleteSquare
+routes.delete("/:id", controller.deleteSquare.bind(controller));
+
 export default routes;

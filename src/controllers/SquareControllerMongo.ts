@@ -38,7 +38,14 @@ export default class SquareControllerMongo extends Controller<SquareServiceMongo
   }
 
   async deleteSquare(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+   try {
+     const id = req.params.id
+     
+     await this.service.deleteSquare(id)
+     res.status(204).send()
+   } catch (error) {
+    
+   }
   }
 
   async getSquareNickname(req: Request, res: Response): Promise<void> {
