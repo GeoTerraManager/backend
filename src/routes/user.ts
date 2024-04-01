@@ -1,9 +1,13 @@
 import { Router } from "express";
 import UserControllerMongo from "../controllers/UserControllerMongo";
+import authManager from "../middleware/authManager";
 
 const controller = new UserControllerMongo()
 
 const routes = Router()
+
+// Middlewares
+routes.use(authManager);
 
 // POST /usuario -> createUser
 routes.post("/", controller.createUser.bind(controller));

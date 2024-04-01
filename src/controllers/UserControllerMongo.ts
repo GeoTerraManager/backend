@@ -93,5 +93,4 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
       res.status(500).json({"error": `${e}`})
     }
   }
-
 }

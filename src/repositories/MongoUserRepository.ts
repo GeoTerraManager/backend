@@ -37,7 +37,6 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
 
       await this.repository.disconnect();
     } catch (error) {
-      console.log(error);
       throw new Error(`Erro na deleção de usuário: ${error}`);
     }
   }
@@ -55,7 +54,6 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
 
       return user_document;
     } catch (error) {
-      console.log(error);
       return null;
     }
   }
