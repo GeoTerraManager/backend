@@ -26,11 +26,11 @@ export default class ManagerControllerMongo extends Controller<ManagerServiceMon
 
         await manager_login_dto.validate()
       } catch (error) {
-        res.status(422).json({"error": `Erro ao validar o objeto enviado "${error}".`}) 
+        res.status(422).send(`${error}`) 
         return
       }
 
-       if (await this.service.login(manager_login_dto)) {
+      if (await this.service.login(manager_login_dto)) {
         // se o manager existe crie um jwt e envie
         jwt.sign(
           { 
@@ -39,16 +39,44 @@ export default class ManagerControllerMongo extends Controller<ManagerServiceMon
           },
           this.secretKey, { expiresIn: '15min' }, (err, token) => {
             if (err) {
-              res.status(500).json({ error: 'Falha ao gerar o token' });
+              res.status(500).send('Falha ao gerar o token');
             } else {
-              res.json({ token });
+              res.status(200).send(token);
             }
           });
         } else {
-          res.status(401).json({ error: 'Nome de usuario ou senha invalidos' });
+          res.status(401).send('Nome de usuario ou senha invalidos');
         }
     } catch (error) {
-      res.status(500).json({"error": `Erro interno "${error}"`})
+      res.status(500).send(`${error}`)
+    }
+  }
+
+  async validate(req: Request, res: Response): Promise<void> {
+    try {
+      const token = req.headers.authorization;
+
+    if (!token) {
+      res.status(401).send('Usuário não autorizado');
+      return
+    }
+
+    jwt.verify(token, this.secretKey, (err: any, decoded: any) => {
+      if (err) {
+        res.status(403).send('Token de acesso invalido');
+        return
+      } else {
+        (req as any).user = decoded;
+        jwt.sign(decoded, this.secretKey)
+        if (decoded.funcao != 'gerente') {
+          res.status(401).send('Funcionalidade não autorizada')
+          return
+        }
+        res.status(200).send()
+      }    
+    })
+    } catch (error) {
+      res.status(500).send(`${error}`)
     }
   }
 }

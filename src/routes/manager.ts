@@ -8,4 +8,7 @@ const routes = Router()
 // POST /gerente/login -> login
 routes.post("/login", controller.login.bind(controller))
 
+// GET /gerente/valida -> valida
+routes.get("/valida", controller.validate.bind(controller))
+
 export default routes;

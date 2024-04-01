@@ -6,9 +6,9 @@ export default class ManagerLoginDTO extends DTO {
   nome_usuario: string;
 
   @IsString()
-  @MinLength(4)
-  @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {message: 'Senha inválida, não cumpre os requisitos'})
+  // @MinLength(4)
+  // @MaxLength(20)
+  // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {message: 'Senha inválida, não cumpre os requisitos'})
   senha: string;
 
   constructor(
