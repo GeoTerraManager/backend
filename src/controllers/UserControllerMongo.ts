@@ -43,8 +43,35 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
   }
 
   // PUT /usuario/:id
-  updateUser(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async updateUser(req: Request, res: Response): Promise<void> {
+    try {
+      const body = req.body
+      const id = req.params.id
+
+      // validando o corpo da requisicao
+      let user_dto = new UserDTO()
+      try {
+        user_dto = new UserDTO(
+          body.email,
+          body.senha,
+          body.nome_de_usuario,
+          body.nome_completo
+        )
+        await user_dto.validate()
+      } catch(e) {
+        // caso seja invalido retorna codigo 422 e o erro de validacao
+        res.status(422).send(`${e}`)
+        return
+      }
+      // ----------------------
+
+       // atualiza o usuario no banco
+       await this.service.updateUser(id, user_dto)
+       res.status(200).send()
+       // ----------------------
+    } catch (error) {
+      res.status(500).send(`${error}`)
+    }
   }
 
   // DELETE /usuario/:id

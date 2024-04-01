@@ -2,7 +2,6 @@ import { type UserDTO } from '../models/UserDTO'
 import { WithId, Document, ObjectId } from 'mongodb';
 import MongoRepository from './MongoRepository'
 import UserRepository from './UserRepository'
-import { timeStamp } from 'console';
 
 export default class MongoUserRepository extends UserRepository<MongoRepository> {
   constructor () {
@@ -22,58 +21,60 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
     await this.repository.disconnect()
   }
 
-  updateUser (id: string, user: UserDTO): void {
-    throw new Error('Method not implemented.')
+  async updateUser (id: string, user: UserDTO): Promise<void> {
+    const db = await this.repository.connect('api');
+    const users = db.collection('users');
+
+    await users.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          email: user.email,
+          senha: user.senha,
+          nome_de_usuario: user.nome_de_usuario,
+          nome_completo: user.nome_completo
+        }
+      }
+    );
+
+    await this.repository.disconnect()
   }
 
   async removeUser (id: string): Promise<void> {
-    try {
-      const db = await this.repository.connect('api');
-      const users = db.collection('users');
-      
-      await users.deleteOne({
-        _id: new ObjectId(id)
-      })
+    const db = await this.repository.connect('api');
+    const users = db.collection('users');
+    
+    await users.deleteOne({
+      _id: new ObjectId(id)
+    })
 
-      await this.repository.disconnect();
-    } catch (error) {
-      throw new Error(`Erro na deleção de usuário: ${error}`);
-    }
+    await this.repository.disconnect();
   }
 
   async findUserById (id: string): Promise<WithId<Document> | null> {
-    try {
-      const db = await this.repository.connect('api');
-      const users = db.collection('users');
+    const db = await this.repository.connect('api');
+    const users = db.collection('users');
 
-      const user_document = await users.findOne({
-        _id: new ObjectId(id)
-      })
+    const user_document = await users.findOne({
+      _id: new ObjectId(id)
+    })
 
-      await this.repository.disconnect();
-
-      return user_document;
-    } catch (error) {
-      return null;
-    }
+    await this.repository.disconnect();
+    
+    return user_document;
   }
 
   async findUserByName(name: string): Promise<Array<WithId<Document>> | null> {
-    try {
-      const db = await this.repository.connect('api');
-      const users = db.collection('users');
-      
-      const users_documents = await users.find({
-        nome_de_usuario: { $regex: new RegExp(name, "i") } 
-      }).toArray();
-      
-      await this.repository.disconnect();
-  
-      return users_documents;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+    const db = await this.repository.connect('api');
+    const users = db.collection('users');
+    
+    const users_documents = await users.find({
+      nome_de_usuario: { $regex: new RegExp(name, "i") } 
+    }).toArray();
+    
+    await this.repository.disconnect();
+
+    return users_documents;
   }
   
 }
