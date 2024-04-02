@@ -21,4 +21,7 @@ routes.get("/:id", controller.findUserById.bind(controller));
 // DELETE /usuario/:id
 routes.delete("/:id", controller.removeUser.bind(controller));
 
+// PUT /usuario/:id
+routes.put("/:id", controller.updateUser.bind(controller))
+
 export default routes;

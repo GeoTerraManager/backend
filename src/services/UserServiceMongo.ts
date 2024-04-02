@@ -13,7 +13,7 @@ export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
   }
 
   async updateUser (id: string, user: UserDTO): Promise<void> {
-    throw new Error('Method not implemented.')
+    await this.repository.updateUser(id, user)
   }
 
   async removeUser (id: string): Promise<void> {
