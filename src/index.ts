@@ -1,14 +1,40 @@
 import express from 'express'
 import cors from 'cors'
 import routes from './routes'
+import TaskRegistryDTO from './models/TaskRegistryDTO'
+import DestroyDbTask from './tasks/DestroyDbTask'
+import CreateManagerTask from './tasks/CreateManagerTask'
+import AutoTasksController from './controllers/AutoTasksController'
 
-const app = express()
 
-app.use(cors());
+async function main() {
+  // Setup de Tasks Automatizadas (Popular o banco)
+  const autoTasks: TaskRegistryDTO[] = [
+    {
+      task_name: "Destroy DB 💥",
+      task: new DestroyDbTask()
+    },
+    {
+      task_name: "Create Manager 👨🏻‍💼",
+      task: new CreateManagerTask()
+    }
+  ]
 
-app.use(express.json())
-app.use(routes)
+  const autoTasksController = new AutoTasksController(autoTasks)
+  await autoTasksController.run();
 
-app.listen(3001, () => {
-  console.log('Server running on port 3001.')
-})
+  // Rodando a aplicacao
+  const app = express()
+
+  app.use(cors());
+
+  app.use(express.json())
+  app.use(routes)
+
+  app.listen(3001, () => {
+    console.log('🌳TerraGeo Manager🌳')
+    console.log('Acesse em http://localhost:3001 🚀')
+  })
+}
+
+main();
