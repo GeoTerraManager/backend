@@ -6,22 +6,22 @@ import DestroyDbTask from './tasks/DestroyDbTask'
 import CreateManagerTask from './tasks/CreateManagerTask'
 import AutoTasksController from './controllers/AutoTasksController'
 
-
 async function main() {
-  // Setup de Tasks Automatizadas (Popular o banco)
-  const autoTasks: TaskRegistryDTO[] = [
-    {
-      task_name: "Destroy DB 💥",
-      task: new DestroyDbTask()
-    },
-    {
-      task_name: "Create Manager 👨🏻‍💼",
-      task: new CreateManagerTask()
-    }
-  ]
-
-  const autoTasksController = new AutoTasksController(autoTasks)
-  await autoTasksController.run();
+  if (process.argv[2] == "autotasks") {
+    // Setup de Tasks Automatizadas (Popular o banco)
+    const autoTasks: TaskRegistryDTO[] = [
+      {
+        task_name: "Destroy DB 💥",
+        task: new DestroyDbTask()
+      },
+      {
+        task_name: "Create Manager 👨🏻‍💼",
+        task: new CreateManagerTask()
+      }
+    ]
+    const autoTasksController = new AutoTasksController(autoTasks)
+    await autoTasksController.run();
+  }
 
   // Rodando a aplicacao
   const app = express()
