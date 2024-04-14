@@ -5,6 +5,7 @@ import TaskRegistryDTO from './models/TaskRegistryDTO'
 import DestroyDbTask from './tasks/DestroyDbTask'
 import CreateManagerTask from './tasks/CreateManagerTask'
 import AutoTasksController from './controllers/AutoTasksController'
+import CreateSquaresTask from './tasks/CreateSquaresTask'
 
 async function main() {
   if (process.argv[2] == "autotasks") {
@@ -17,6 +18,10 @@ async function main() {
       {
         task_name: "Create Manager 👨🏻‍💼",
         task: new CreateManagerTask()
+      },
+      {
+        task_name: "Creating Squares 🌎",
+        task: new CreateSquaresTask()
       }
     ]
     const autoTasksController = new AutoTasksController(autoTasks)
