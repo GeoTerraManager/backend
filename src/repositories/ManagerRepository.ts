@@ -9,7 +9,4 @@ export default abstract class ManagerRepository<T> {
   
   // POST /login
   abstract login (manager: ManagerLoginDTO): Promise<Boolean>
-
-  // AUTO-TASK
-  abstract createManager(manager: ManagerLoginDTO): Promise<void>
 }

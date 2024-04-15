@@ -6,7 +6,7 @@ export default class MongoManagerRepository extends ManagerRepository<MongoRepos
   constructor () {
     super(new MongoRepository())
   }
-
+  
   async login(manager: ManagerLoginDTO): Promise<Boolean> {
     const db = await this.repository.connect('api')
     const managers = db.collection('managers') 
@@ -24,14 +24,4 @@ export default class MongoManagerRepository extends ManagerRepository<MongoRepos
     return false
   }
 
-  async createManager(manager: ManagerLoginDTO): Promise<void> {
-    const db = await this.repository.connect('api')
-    const managers = db.collection('managers')
-    await managers.insertOne({
-      nome_usuario: manager.nome_usuario,
-      senha: manager.senha
-    })
-
-    await this.repository.disconnect()
-  }
 }

@@ -18,10 +18,4 @@ export default class MongoRepository extends Repository<MongoClient, Db> {
   async disconnect (): Promise<void> {
     await this.client.close()
   }
-
-  async destroy_db(dbName: string): Promise<void> {
-    const db = await this.connect(dbName)
-    await db.dropDatabase()
-    await this.disconnect()
-  }
 }

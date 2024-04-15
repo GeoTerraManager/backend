@@ -2,7 +2,6 @@ import { ObjectId } from "bson";
 import SquareDTO from "../models/SquareDTO";
 import MongoRepository from "./MongoRepository";
 import SquareRepository from "./SquareRepository";
-import { Feature, Polygon } from "geojson";
 
 export default class MongoSquareRepository extends SquareRepository<MongoRepository> {
   constructor() {
@@ -12,26 +11,13 @@ export default class MongoSquareRepository extends SquareRepository<MongoReposit
   async createSquare(square: SquareDTO): Promise<void> {
     const db = await this.repository.connect('api')
     const squares = db.collection('squares')
-
-    // creating the geojson polygon
-    const squarePolygon: Feature<Polygon> = {
-      type: 'Feature',
-      properties: {
-        apelido: square.apelido
-      },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[
-            [square.min_lon, square.min_lat],
-            [square.max_lon, square.min_lat],
-            [square.max_lon, square.max_lat],
-            [square.min_lon, square.max_lat],
-            [square.min_lon, square.min_lat]
-        ]]
-      }
-  };
-
-    await squares.insertOne(squarePolygon)
+    await squares.insertOne({
+      apelido: square.apelido,
+      min_lat: square.min_lat,
+      max_lat: square.max_lat,
+      min_lon: square.min_lon,
+      max_lon: square.max_lon
+    })
 
     await this.repository.disconnect()
   }
