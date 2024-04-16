@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@prisma/client": "5.11.0",
+    "@turf/turf": "^6.5.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/geojson": "^7946.0.14",

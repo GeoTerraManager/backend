@@ -13,7 +13,7 @@ export default class MongoSquareRepository extends SquareRepository<MongoReposit
     const db = await this.repository.connect('api')
     const squares = db.collection('squares')
 
-    // creating the geojson polygon
+    // Criando o poligono GeoJSON
     const squarePolygon: Feature<Polygon> = {
       type: 'Feature',
       properties: {
@@ -29,11 +29,11 @@ export default class MongoSquareRepository extends SquareRepository<MongoReposit
             [square.min_lon, square.min_lat]
         ]]
       }
-  };
+    };
 
-    await squares.insertOne(squarePolygon)
-
-    await this.repository.disconnect()
+    // Inserindo
+    await squares.insertOne(squarePolygon);
+    await this.repository.disconnect();
   }
 
   async deleteSquare(id: string): Promise<void> {
