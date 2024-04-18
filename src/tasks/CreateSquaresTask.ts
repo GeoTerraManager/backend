@@ -22,7 +22,7 @@ export default class CreateSquaresTask implements Task {
     const difLon = maxLon - minLon;
 
     const columnQuantity = 24;
-    const rowQuantity = 20;
+    const rowQuantity = 40;
 
     // Calculando o tamanho dos objetos quadricula
     const squareWidthStep = difLat / rowQuantity;
