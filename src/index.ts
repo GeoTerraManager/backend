@@ -8,6 +8,8 @@ import AutoTasksController from './controllers/AutoTasksController'
 // import CreateSquaresTask from './tasks/CreateSquaresTask'
 // import CreateUsersTask from './tasks/CreateUsersTask'
 import CreateCollectionTempAoiTask from './tasks/CreateCollectionTempAoiTask'
+import CreateCollectionAoiTask from './tasks/CreateCollectionAoiTask'
+import DestroyTempAoiTask from './tasks/DestroyTempAoiTask'
 
 async function main () {
   if (process.argv[2] === 'autotasks') {
@@ -21,18 +23,18 @@ async function main () {
         task_name: 'Create Manager 👨🏻‍💼',
         task: new CreateManagerTask()
       },
-      // {
-      //   task_name: "Create Users 👽",
-      //   task: new CreateUsersTask()
-      // },
       {
         task_name: 'Create Temp AOI',
         task: new CreateCollectionTempAoiTask()
-      }
-      // {
-      //   task_name: "Creating Squares 🌎",
-      //   task: new CreateSquaresTask()
-      // }
+      },
+      {
+        task_name: 'Create Collection Aoi Based on Temp AOI',
+        task: new CreateCollectionAoiTask()
+      },
+      {
+        task_name: 'Destroy Temp AOI',
+        task: new DestroyTempAoiTask()
+      },
     ]
     const autoTasksController = new AutoTasksController(autoTasks)
     await autoTasksController.run()
