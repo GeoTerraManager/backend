@@ -1,5 +1,7 @@
 import MongoTempRepository from './MongoTempRepository'
-import { AoiAtibaia, AoiCruzeiro, AoiTaubate } from '../static/Aoi'
+import * as AoiAtibaia from '../static/aoi_atibaia.json';
+import * as AoiCruzeiro from '../static/aoi_cruzeiro.json';
+import * as AoiTaubate from '../static/aoi_taubate.json';
 
 export default class MongoTempAoiRepository extends MongoTempRepository {
   async destroyCollection (): Promise<void> {
