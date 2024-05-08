@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { ParamsDictionary } from "express-serve-static-core";
-import { ParsedQs } from "qs";
 import ProjectServiceMongo from "../services/ProjectServiceMongo";
 import Controller from "./Controller";
 import ProjectController from "./ProjectController";
+import { ObjectId } from "mongodb";
 
 export default class ProjectControllerMongo extends Controller<ProjectServiceMongo> implements ProjectController {
   constructor() {
@@ -19,8 +18,18 @@ export default class ProjectControllerMongo extends Controller<ProjectServiceMon
     }
   }
 
-  detailsProject(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>): Promise<void> {
-    throw new Error("Method not implemented.");
+  async detailsProject(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.params.id
+      const result = await this.service.detailsProject(new ObjectId(id));
+      if (result) {
+        res.status(200).send(result)
+      } else {
+        res.status(204).send("Projeto não econtrado")
+      }
+    } catch (error) {
+      res.status(500).send(`Erro ao buscar projeto: ${error}`)
+    }
   }
   
 }

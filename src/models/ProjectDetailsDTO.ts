@@ -2,20 +2,32 @@ import DTO from "./DTO";
 
 export default class ProjectDetailsDTO extends DTO {
     nomeProjeto: string;
-    qtdFeita: number;
-    qtdPendente: number;
-    qtdRev: number;
+    qtdRevisores: number;
+    qtdAnalistas: number;
+    qtdGrades: number;
+    qtdGradeFeita: number;
+    qtdGradeAndamento: number;
+    qtdGradePendente: number;
+    pctRecorrencia: string;
 
-    constructor (
+    constructor(
         nomeProjeto: string = "",
-        qtdFeita: number = 0,
-        qtdPendente: number = 0,
-        qtdRev: number = 0
+        qtdRevisores: number = 0,
+        qtdAnalistas: number = 0,
+        qtdGrades: number = 0,
+        qtdGradeFeita: number = 0,
+        qtdGradeAndamento: number = 0,
+        qtdGradePendente: number = 0,
+        pctRecorrencia: string = ""
     ) {
         super();
         this.nomeProjeto = nomeProjeto;
-        this.qtdFeita = qtdFeita;
-        this.qtdPendente = qtdPendente;
-        this.qtdRev = qtdRev;
+        this.qtdRevisores = qtdRevisores;
+        this.qtdAnalistas = qtdAnalistas;
+        this.qtdGrades = qtdGrades;
+        this.qtdGradeFeita = qtdGradeFeita;
+        this.qtdGradeAndamento = qtdGradeAndamento;
+        this.qtdGradePendente = qtdGradePendente;
+        this.pctRecorrencia = pctRecorrencia;
     }
 }

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb"
-import ProjectsDTO from "../models/ProjectsDTO"
+import ProjectDTO from "../models/ProjectDTO"
 import ProjectDetailsDTO from "../models/ProjectDetailsDTO"
 
 export default abstract class ProjectRepository<T> {
@@ -9,6 +9,6 @@ export default abstract class ProjectRepository<T> {
         this.repository = repository
     }
 
-    abstract allProjects(): Promise<ProjectsDTO[]>;
-    abstract detailsProject(projectId: ObjectId): Promise<ProjectDetailsDTO>;
+    abstract allProjects(): Promise<ProjectDTO[]>;
+    abstract detailsProject(projectId: ObjectId): Promise<ProjectDetailsDTO| null>;
 }

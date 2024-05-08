@@ -1,121 +1,285 @@
 import { ObjectId } from "bson";
 import ProjectDetailsDTO from "../models/ProjectDetailsDTO";
-import ProjectsDTO from "../models/ProjectsDTO";
+import ProjectDTO from "../models/ProjectDTO";
 import MongoRepository from "./MongoRepository";
 import ProjectsRepository from "./ProjectsRepository";
 
 export default class MongoProjectsRepository extends ProjectsRepository<MongoRepository> {
-    constructor() {
-        super(new MongoRepository())
+  constructor() {
+    super(new MongoRepository());
+  }
+
+  async allProjects(): Promise<ProjectDTO[]> {
+    const db = await this.repository.connect("api");
+    const collectionProjects = db.collection("projects");
+    const collectionGrade = db.collection("grades");
+    const collectionApontamentos = db.collection("apontamentos");
+    const collectionAlteracoes = db.collection("alteracoes");
+
+    const projects = await collectionProjects
+      .aggregate([
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            grade: 1,
+            apontamentos: 1,
+            alteracoes: 1,
+          },
+        },
+      ])
+      .toArray();
+
+    const result = await Promise.all(
+      projects.map(async (project) => {
+        const qtdPoligonos = await collectionGrade
+          .aggregate([
+            {
+              $match: {
+                _id: project.grade,
+              },
+            },
+            {
+              $addFields: {
+                qtdGradeFeita: {
+                  $reduce: {
+                    input: "$features",
+                    initialValue: 0,
+                    in: {
+                      $cond: {
+                        if: { $eq: ["$$this.properties.status", "finalizado"] },
+                        then: { $add: ["$$value", 1] },
+                        else: "$$value",
+                      },
+                    },
+                  },
+                },
+                qtdGradeAndamento: {
+                  $reduce: {
+                    input: "$features",
+                    initialValue: 0,
+                    in: {
+                      $cond: {
+                        if: { $eq: ["$$this.properties.status", "andamento"] },
+                        then: { $add: ["$$value", 1] },
+                        else: "$$value",
+                      },
+                    },
+                  },
+                },
+                qtdGradePendente: {
+                  $reduce: {
+                    input: "$features",
+                    initialValue: 0,
+                    in: {
+                      $cond: {
+                        if: { $eq: ["$$this.properties.status", null] },
+                        then: { $add: ["$$value", 1] },
+                        else: "$$value",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ])
+          .toArray();
+
+        project.qtdGradeFeita = qtdPoligonos[0].qtdGradeFeita;
+        project.qtdGradeAndamento = qtdPoligonos[0].qtdGradeAndamento;
+        project.qtdGradePendente = qtdPoligonos[0].qtdGradePendente;
+
+        let qtdApontamentos = await collectionApontamentos
+          .aggregate([
+            {
+              $match: {
+                _id: project.apontamentos,
+              },
+            },
+            {
+              $addFields: {
+                qtdApontamentos: { $size: "$features" },
+              },
+            },
+          ])
+          .toArray();
+
+        let qtdAlteracao = await collectionAlteracoes
+          .aggregate([
+            {
+              $match: {
+                _id: project.alteracoes,
+              },
+            },
+            {
+              $addFields: {
+                qtdAlteracao: { $size: "$features" },
+              },
+            },
+          ])
+          .toArray();
+
+        project.qtdApontamentos = qtdApontamentos[0].qtdApontamentos;
+        project.qtdAlteracao = qtdAlteracao[0].qtdAlteracao;
+
+        return new ProjectDTO(
+          project._id,
+          project.name,
+          project.qtdAlteracao,
+          project.qtdApontamentos,
+          project.qtdGradeFeita,
+          project.qtdGradeAndamento,
+          project.qtdGradePendente
+        );
+      })
+    );
+
+    return result;
+  }
+
+  async detailsProject(projectId: ObjectId): Promise<ProjectDetailsDTO | null> {
+    const db = await this.repository.connect("api");
+    const collectionProjects = db.collection("projects");
+    const collectionGrade = db.collection("grades");
+    const collectionApontamentos = db.collection("apontamentos");
+    const collectionAlteracoes = db.collection("alteracoes");
+
+    let project = await collectionProjects
+      .aggregate([
+        {
+          $match: {
+            _id: projectId,
+          },
+        },
+        {
+          $addFields: {
+            qtdRevisores: { $size: "$revisores" },
+            qtdAnalistas: { $size: "$interpretes" },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            name: 1,
+            qtdRevisores: 1,
+            qtdAnalistas: 1,
+            grade: 1,
+            apontamentos: 1,
+            alteracoes: 1,
+          },
+        },
+      ])
+      .toArray();
+
+    if (!project) {
+      return null;
     }
 
-    async allProjects(): Promise<ProjectsDTO[]> {
-        const db = await this.repository.connect("api");
-        const collectionProjects = db.collection("projects");
+    const qtdPoligonos = await collectionGrade
+      .aggregate([
+        {
+          $match: {
+            _id: project[0].grade,
+          },
+        },
+        {
+          $addFields: {
+            qtdGrades: { $size: "$features" },
+            qtdGradeFeita: {
+              $reduce: {
+                input: "$features",
+                initialValue: 0,
+                in: {
+                  $cond: {
+                    if: { $eq: ["$$this.properties.status", "finalizado"] },
+                    then: { $add: ["$$value", 1] },
+                    else: "$$value",
+                  },
+                },
+              },
+            },
+            qtdGradeAndamento: {
+              $reduce: {
+                input: "$features",
+                initialValue: 0,
+                in: {
+                  $cond: {
+                    if: { $eq: ["$$this.properties.status", "andamento"] },
+                    then: { $add: ["$$value", 1] },
+                    else: "$$value",
+                  },
+                },
+              },
+            },
+            qtdGradePendente: {
+              $reduce: {
+                input: "$features",
+                initialValue: 0,
+                in: {
+                  $cond: {
+                    if: { $eq: ["$$this.properties.status", null] },
+                    then: { $add: ["$$value", 1] },
+                    else: "$$value",
+                  },
+                },
+              },
+            },
+          },
+        },
+      ])
+      .toArray();
 
-        const projects = await collectionProjects.aggregate([
-            {
-                $lookup: {
-                    from: "grades",
-                    localField: "grade",
-                    foreignField: "_id",
-                    as: "gradeInfo"
-                }
-            },
-            {
-                $lookup: {
-                    from: "alteracoes",
-                    localField: "alteracoes",
-                    foreignField: "_id",
-                    as: "alteracoesInfo"
-                }
-            },
-            {
-                $lookup: {
-                    from: "apontamentos",
-                    localField: "apontamentos",
-                    foreignField: "_id",
-                    as: "apontamentosInfo"
-                }
-            },
-            {
-                $unwind: "$gradeInfo"
-            },
-            {
-                $unwind: { path: "$apontamentosInfo", preserveNullAndEmptyArrays: true } // Unwind apontamentosInfo array
-            },
-            {
-                $unwind: { path: "$alteracoesInfo", preserveNullAndEmptyArrays: true } // Unwind alteracoesInfo array
-            },
-            {
-                $addFields: {
-                    qtdRevisores: { $size: "$revisores" },
-                    qtdAnalistas: { $size: "$interpretes" },
-                    qtdGrades: { $size: { $ifNull: ["$gradeInfo.features", []] } },
-                    qtdGradeFeita: { $sum: { $cond: { if: { $eq: ["$gradeInfo.features.properties.status", "finalizado"] }, then: 1, else: 0 } } },
-                    qtdGradeRevisao: { $cond: { if: { $eq: ["$gradeInfo.features.properties.status", "revisao"] }, then: 1, else: 0 } },
-                    qtdGradePendente: { $cond: { if: { $eq: ["$gradeInfo.features.properties.status", ""] }, then: 1, else: 0 } },
-                    pctRecorrencia: { $cond: { if: { $and: [{ $gt: [{ $size: "$alteracoesInfo.features" }, 0] }, { $gt: [{ $size: "$apontamentosInfo.features" }, 0] }] }, then: { $multiply: [{ $divide: [{ $size: "$apontamentosInfo.features" }, { $size: "$alteracoesInfo.features" }] }, 100] }, else: 0 } }
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    projects: {
-                        $push: {
-                            name: "$name",
-                            qtdRevisores: "$qtdRevisores",
-                            qtdAnalistas: "$qtdAnalistas",
-                            qtdGrades: "$qtdGrades",
-                            qtdGradeFeita: "$qtdGradeFeita",
-                            qtdGradeRevisao: "$qtdGradeRevisao",
-                            qtdGradePendente: "$qtdGradePendente",
-                            pctRecorrencia: "$pctRecorrencia"
-                        }
-                    }
-                }
-            },
-            {
-                $unwind: "$projects"
-            },
-            {
-                $replaceRoot: { newRoot: "$projects" }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    name: 1,
-                    qtdRevisores: 1,
-                    qtdAnalistas: 1,
-                    qtdGrades: 1,
-                    qtdGradeFeita: 1,
-                    qtdGradeRevisao: 1,
-                    qtdGradePendente: 1,
-                    pctRecorrencia: 1
-                }
-            }
-        ]).toArray();        
-        
-        const result: ProjectsDTO[] = []
+    project[0].qtdGrades = qtdPoligonos[0].qtdGrades;
+    project[0].qtdGradeFeita = qtdPoligonos[0].qtdGradeFeita;
+    project[0].qtdGradeAndamento = qtdPoligonos[0].qtdGradeAndamento;
+    project[0].qtdGradePendente = qtdPoligonos[0].qtdGradePendente;
 
-        projects.map((project) => {
-            result.push(
-                new ProjectsDTO(
-                    project.name,
-                    project.qtdRevisores,
-                    project.qtdAnalistas,
-                    project.qtdGrades,
-                    project.qtdGradeFeita,
-                    project.qtdGradePendente,
-                    project.qtdGradeRevisao,
-                    project.pctRecorrencia
-                ))
-        })
+    const qtdAlteracoes = await collectionAlteracoes
+      .aggregate([
+        {
+          $match: {
+            _id: project[0].alteracoes,
+          },
+        },
+        {
+          $addFields: {
+            qtdAlteracoes: { $size: "$features" },
+          },
+        },
+      ])
+      .toArray();
 
-        return result
-    }
+    const qtdApontamentos = await collectionApontamentos
+      .aggregate([
+        {
+          $match: {
+            _id: project[0].apontamentos,
+          },
+        },
+        {
+          $addFields: {
+            qtdApontamentos: { $size: "$features" },
+          },
+        },
+      ])
+      .toArray();
 
-    async detailsProject(projectId: ObjectId): Promise<ProjectDetailsDTO> {
-        throw new Error("Method not implemented.");
-    }
+    project[0].pctRecorrencia = (
+      (qtdApontamentos[0].qtdApontamentos * 100) /
+      qtdAlteracoes[0].qtdAlteracoes
+    ).toFixed(2);
+
+    const result: ProjectDetailsDTO = new ProjectDetailsDTO(
+      project[0].name,
+      project[0].qtdRevisores,
+      project[0].qtdAnalistas,
+      project[0].qtdGrades,
+      project[0].qtdGradeFeita,
+      project[0].qtdGradeAndamento,
+      project[0].qtdGradePendente,
+      project[0].pctRecorrencia
+    );
+
+    return result;
+  }
 }

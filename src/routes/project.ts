@@ -8,4 +8,6 @@ const routes = Router()
 // GET /project
 routes.get("", controller.allProjects.bind(controller))
 
+routes.get("/:id", controller.detailsProject.bind(controller))
+
 export default routes;
