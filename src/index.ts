@@ -2,21 +2,21 @@ import express from 'express'
 import cors from 'cors'
 import routes from './routes'
 import type TaskRegistryDTO from './models/TaskRegistryDTO'
-import DestroyDbTask from './tasks/DestroyDbTask'
+// import DestroyDbTask from './tasks/DestroyDbTask'
 import CreateManagerTask from './tasks/CreateManagerTask'
 import AutoTasksController from './controllers/AutoTasksController'
 // import CreateSquaresTask from './tasks/CreateSquaresTask'
 // import CreateUsersTask from './tasks/CreateUsersTask'
-import CreateCollectionTempAoiTask from './tasks/CreateCollectionTempAoiTask'
+// import CreateCollectionTempAoiTask from './tasks/CreateCollectionTempAoiTask'
 
 async function main () {
   if (process.argv[2] === 'autotasks') {
     // Setup de Tasks Automatizadas (Popular o banco)
     const autoTasks: TaskRegistryDTO[] = [
-      {
-        task_name: 'Destroy DB 💥',
-        task: new DestroyDbTask()
-      },
+      // {
+      //   task_name: 'Destroy DB 💥',
+      //   task: new DestroyDbTask()
+      // },
       {
         task_name: 'Create Manager 👨🏻‍💼',
         task: new CreateManagerTask()
@@ -25,10 +25,10 @@ async function main () {
       //   task_name: "Create Users 👽",
       //   task: new CreateUsersTask()
       // },
-      {
-        task_name: 'Create Temp AOI',
-        task: new CreateCollectionTempAoiTask()
-      }
+      // {
+      //   task_name: 'Create Temp AOI',
+      //   task: new CreateCollectionTempAoiTask()
+      // }
       // {
       //   task_name: "Creating Squares 🌎",
       //   task: new CreateSquaresTask()

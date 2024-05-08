@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import userRoutes from "./user"; 
 import squareRoutes from "./square";
 import managerRoutes from "./manager";
+import projectRoutes from "./project";
 
 const routes = Router()
 
@@ -9,6 +10,8 @@ const routes = Router()
 routes.use("/usuario", userRoutes)
 routes.use("/quadricula", squareRoutes)
 routes.use("/gerente", managerRoutes)
+routes.use("/project", projectRoutes)
+
 
 // HelloWorld Route
 routes.get("/", (req: Request, res: Response) => {
