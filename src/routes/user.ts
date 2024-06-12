@@ -7,7 +7,7 @@ const controller = new UserControllerMongo()
 const routes = Router()
 
 // Middlewares
-routes.use(authManager);
+// routes.use(authManager);
 
 // POST /usuario -> createUser
 routes.post("/", controller.createUser.bind(controller));
