@@ -2,6 +2,7 @@ import UserNameOnlyDTO from '../models/UserNameOnlyDTO'
 import { UserDTO } from '../models/UserDTO'
 import UserRepositoryMongo from '../repositories/MongoUserRepository'
 import UserService from './UserService'
+import UserResponseDTO from '../models/UserResponseDTO'
 
 export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
   constructor () {
@@ -20,20 +21,14 @@ export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
     await this.repository.removeUser(id)
   }
 
-  async findUserById (id: string): Promise<UserNameOnlyDTO | null> {
+  async findUserById (id: string): Promise<UserResponseDTO | null> {
     const user_document = await this.repository.findUserById(id);
-
-    let dto: UserNameOnlyDTO | null = null;
-
+  
     if (user_document) {
-      dto = new UserNameOnlyDTO(
-        user_document._id,
-        user_document.nome_completo,
-        user_document.nome_de_usuario
-      );
+      return user_document; 
     }
 
-    return dto; 
+    return null
   }
 
   async findUserByName(name: string): Promise<Array<UserNameOnlyDTO> | null> {
