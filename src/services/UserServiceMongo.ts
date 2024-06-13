@@ -3,6 +3,7 @@ import { UserDTO } from '../models/UserDTO'
 import UserRepositoryMongo from '../repositories/MongoUserRepository'
 import UserService from './UserService'
 import UserResponseDTO from '../models/UserResponseDTO'
+import UsersByProjectDTO from '../models/UsersByProjectDTO'
 
 export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
   constructor () {
@@ -49,5 +50,9 @@ export default class UserServiceMongo extends UserService<UserRepositoryMongo> {
     }
 
     return array_dtos
+  }
+
+  async usersByProject(projectId: string): Promise<UsersByProjectDTO[] | null> {
+    return await this.repository.usersByProject(projectId);
   }
 }

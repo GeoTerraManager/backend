@@ -6,4 +6,5 @@ export default interface UserController {
   removeUser(req: Request, res: Response): Promise<void>
   findUserById(req: Request, res: Response): Promise<void>
   findUserByName(req: Request, res: Response): Promise<void>
+  findUsersByProject(req: Request, res: Response): Promise<void>
 }

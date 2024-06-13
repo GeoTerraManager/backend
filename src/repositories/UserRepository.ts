@@ -1,6 +1,7 @@
 import { type UserDTO } from '../models/UserDTO'
 import { WithId, Document } from "mongodb";
 import UserResponseDTO from '../models/UserResponseDTO';
+import UsersByProjectDTO from '../models/UsersByProjectDTO';
 
 export default abstract class UserRepository<T> {
   protected repository: T
@@ -22,4 +23,6 @@ export default abstract class UserRepository<T> {
 
   // GET /usuario?nome_usuario=:name
   abstract findUserByName (name: string): Promise<Array<WithId<Document>> | null>
+
+  abstract usersByProject (projectId: string): Promise<Array<UsersByProjectDTO> | null>
 }

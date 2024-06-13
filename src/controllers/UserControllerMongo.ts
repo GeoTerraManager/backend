@@ -120,4 +120,20 @@ export default class UserControllerMongo extends Controller<UserServiceMongo> im
       res.status(500).json({"error": `${e}`})
     }
   }
+
+  async findUsersByProject(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.params.id;
+
+      const response = await this.service.usersByProject(id);
+
+      if (response) {
+        res.status(200).json(response);
+      } else {
+        res.status(204).send();
+      }
+    } catch (e) {
+      res.status(500).json({"error": `${e}`})
+    }
+  }
 }

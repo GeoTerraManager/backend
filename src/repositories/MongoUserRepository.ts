@@ -3,6 +3,7 @@ import { WithId, Document, ObjectId } from 'mongodb';
 import MongoRepository from './MongoRepository'
 import UserRepository from './UserRepository'
 import UserResponseDTO, { UserInterpreteResponse, UserRevisorResponse } from '../models/UserResponseDTO';
+import UsersByProjectDTO from '../models/UsersByProjectDTO';
 
 export default class MongoUserRepository extends UserRepository<MongoRepository> {
   constructor() {
@@ -345,4 +346,44 @@ export default class MongoUserRepository extends UserRepository<MongoRepository>
     return users_documents;
   }
 
+  async usersByProject(projectId: string): Promise<Array<UsersByProjectDTO> | null> {
+    const db = await this.repository.connect('api');
+    const projectCollection = db.collection('projects');
+    const users = db.collection('users');
+
+    const id = new ObjectId(projectId);
+
+    const project = await projectCollection.findOne({_id: id});
+    const userIds: { id: ObjectId; cargo: string; }[] = []
+    const result: UsersByProjectDTO[] = []
+
+    if (project) {
+      project.revisores.map((revisor: ObjectId) => {
+        userIds.push({id: revisor, cargo: "REVISOR"})
+      })
+      project.interpretes.map((interprete: ObjectId) => {
+        userIds.push({id: interprete, cargo: "INTERPRETE"})
+      })
+
+      for (const userId of userIds) {
+        const user = await users.findOne({_id: userId.id});
+        if (user) {
+          result.push(
+            new UsersByProjectDTO(
+              user.name,
+              userId.id,
+              userId.cargo
+            )
+          )
+        }
+      }
+
+      await this.repository.disconnect();
+
+      return result;
+    }
+  
+    await this.repository.disconnect();    
+    return null
+  }
 }
