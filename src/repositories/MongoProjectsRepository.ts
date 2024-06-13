@@ -166,12 +166,14 @@ export default class MongoProjectsRepository extends ProjectsRepository<MongoRep
             grade: 1,
             apontamentos: 1,
             alteracoes: 1,
+            revisores: 1,
+            interpretes: 1,
           },
         },
       ])
       .toArray();
 
-    if (!project) {
+    if (!project || project.length === 0) {
       return null;
     }
 
@@ -272,7 +274,9 @@ export default class MongoProjectsRepository extends ProjectsRepository<MongoRep
     const result: ProjectDetailsDTO = new ProjectDetailsDTO(
       project[0].name,
       project[0].qtdRevisores,
+      project[0].revisores, // Passa os IDs dos revisores
       project[0].qtdAnalistas,
+      project[0].interpretes, // Passa os IDs dos intérpretes
       project[0].qtdGrades,
       project[0].qtdGradeFeita,
       project[0].qtdGradeAndamento,
